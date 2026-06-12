@@ -1,11 +1,11 @@
 /**
- * Run database migration against Supabase Postgres.
+ * Run all SQL migrations in supabase/migrations/ (sorted by filename).
  *
  * Usage:
- *   Set DATABASE_URL in .env.local (from Supabase → Project Settings → Database → Connection string)
+ *   Add DATABASE_URL to .env.local (Supabase → Project Settings → Database → URI)
  *   npm run db:migrate
  */
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 import pg from "pg";
@@ -26,7 +26,7 @@ function loadEnvLocal() {
       if (!process.env[key]) process.env[key] = value;
     }
   } catch {
-    // .env.local optional if DATABASE_URL is already exported
+    // optional
   }
 }
 
@@ -47,18 +47,32 @@ Example:
   process.exit(1);
 }
 
-const sql = readFileSync(
-  resolve(__dirname, "../supabase/migrations/001_schema.sql"),
-  "utf8"
-);
+const migrationsDir = resolve(__dirname, "../supabase/migrations");
+const files = readdirSync(migrationsDir)
+  .filter((f) => f.endsWith(".sql"))
+  .sort();
 
-const client = new pg.Client({ connectionString: databaseUrl, ssl: { rejectUnauthorized: false } });
+if (files.length === 0) {
+  console.error("No migration files found.");
+  process.exit(1);
+}
+
+const client = new pg.Client({
+  connectionString: databaseUrl,
+  ssl: { rejectUnauthorized: false },
+});
 
 try {
   await client.connect();
-  console.log("Connected. Running migration…");
-  await client.query(sql);
-  console.log("Migration completed successfully.");
+  console.log(`Connected. Running ${files.length} migration(s)…`);
+
+  for (const file of files) {
+    const sql = readFileSync(resolve(migrationsDir, file), "utf8");
+    console.log(`→ ${file}`);
+    await client.query(sql);
+  }
+
+  console.log("All migrations completed successfully.");
 } catch (err) {
   console.error("Migration failed:", err instanceof Error ? err.message : err);
   process.exit(1);

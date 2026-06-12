@@ -13,7 +13,7 @@ import { ToastProvider, useToast } from "@/lib/toast/ToastProvider";
 
 function DashboardContent() {
   const { toast } = useToast();
-  const { profile, loading: authLoading, signOut } = useAuth();
+  const { profile, profileError, loading: authLoading, signOut, refreshProfile } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -60,8 +60,22 @@ function DashboardContent() {
       userName={profile?.name}
       onSignOut={signOut}
     >
-      {authLoading || (loading && groups.length === 0) ? (
+      {authLoading || (loading && groups.length === 0 && !profileError) ? (
         <GroupViewSkeleton />
+      ) : profileError ? (
+        <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
+          <div className="max-w-md rounded-2xl border border-amber-200 bg-white p-6 text-center shadow-card">
+            <p className="font-semibold text-amber-900">Profile setup required</p>
+            <p className="mt-2 text-sm text-amber-800">{profileError}</p>
+            <p className="mt-4 text-xs text-slate-500">
+              Run <code className="rounded bg-slate-100 px-1">002_auth.sql</code> in Supabase and add{" "}
+              <code className="rounded bg-slate-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code> on Vercel.
+            </p>
+            <Button className="mt-5" variant="secondary" fullWidth onClick={refreshProfile}>
+              Retry
+            </Button>
+          </div>
+        </div>
       ) : error && groups.length === 0 ? (
         <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
           <div className="max-w-md rounded-2xl border border-red-200 bg-white p-6 text-center shadow-card">

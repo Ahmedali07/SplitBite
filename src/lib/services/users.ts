@@ -41,7 +41,13 @@ export async function createProfileForAuthUser(authUser: AuthUser): Promise<User
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (error.code === "23505") {
+      const existing = await getProfileByAuthId(authUser.id);
+      if (existing) return existing;
+    }
+    throw new Error(error.message);
+  }
   return data;
 }
 

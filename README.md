@@ -53,6 +53,32 @@ Open [http://localhost:3000](http://localhost:3000). You will be redirected to `
 2. For Google OAuth, add redirect URL: `http://localhost:3000/auth/callback` (and your production URL later)
 3. Run `002_auth.sql` if you haven't already (see step 3)
 
+## Deploy to Vercel
+
+1. Import the GitHub repo in [Vercel](https://vercel.com/new) (enables auto-deploy on every push to `main`).
+2. **Project Settings → Environment Variables** — add these (Production, Preview, Development):
+
+   | Name | Value |
+   |------|--------|
+   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → API → **service_role** (server-only, never expose to client) |
+
+3. **Run migrations** (once) — add `DATABASE_URL` to `.env.local`, then:
+   ```bash
+   npm run db:migrate
+   ```
+   Or paste all files in `supabase/migrations/` into the Supabase SQL Editor.
+
+4. **Auth redirect URLs + Google OAuth** — either manually in Supabase Dashboard, or:
+   ```bash
+   # .env.local: SUPABASE_ACCESS_TOKEN, SITE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+   npm run supabase:configure
+   ```
+   Google Cloud redirect URI must include: `https://xsmutlsdlhzvngfdvqmz.supabase.co/auth/v1/callback`
+
+5. Redeploy after saving env vars (**Deployments → … → Redeploy**).
+
 ## Features
 
 - **Authentication** — email/password sign-up and sign-in, Google OAuth

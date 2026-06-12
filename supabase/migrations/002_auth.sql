@@ -68,6 +68,26 @@ DROP POLICY IF EXISTS "Allow all for group_members" ON public.group_members;
 DROP POLICY IF EXISTS "Allow all for expenses" ON public.expenses;
 DROP POLICY IF EXISTS "Allow all for expense_participants" ON public.expense_participants;
 
+-- Drop member-scoped policies (idempotent re-run)
+DROP POLICY IF EXISTS "users_select" ON public.users;
+DROP POLICY IF EXISTS "users_insert_own" ON public.users;
+DROP POLICY IF EXISTS "users_insert_placeholder" ON public.users;
+DROP POLICY IF EXISTS "users_update_own" ON public.users;
+DROP POLICY IF EXISTS "groups_select" ON public.groups;
+DROP POLICY IF EXISTS "groups_insert" ON public.groups;
+DROP POLICY IF EXISTS "groups_update" ON public.groups;
+DROP POLICY IF EXISTS "group_members_select" ON public.group_members;
+DROP POLICY IF EXISTS "group_members_insert" ON public.group_members;
+DROP POLICY IF EXISTS "group_members_delete" ON public.group_members;
+DROP POLICY IF EXISTS "expenses_select" ON public.expenses;
+DROP POLICY IF EXISTS "expenses_insert" ON public.expenses;
+DROP POLICY IF EXISTS "expenses_update" ON public.expenses;
+DROP POLICY IF EXISTS "expenses_delete" ON public.expenses;
+DROP POLICY IF EXISTS "expense_participants_select" ON public.expense_participants;
+DROP POLICY IF EXISTS "expense_participants_insert" ON public.expense_participants;
+DROP POLICY IF EXISTS "expense_participants_update" ON public.expense_participants;
+DROP POLICY IF EXISTS "expense_participants_delete" ON public.expense_participants;
+
 -- users: own profile + co-members in shared groups
 CREATE POLICY "users_select" ON public.users
   FOR SELECT USING (
