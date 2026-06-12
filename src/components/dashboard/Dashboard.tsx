@@ -8,10 +8,12 @@ import { GroupView } from "@/components/groups/GroupView";
 import { Button } from "@/components/ui/Button";
 import { GroupViewSkeleton } from "@/components/ui/Skeleton";
 import { listGroups } from "@/lib/services/groups";
+import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { ToastProvider, useToast } from "@/lib/toast/ToastProvider";
 
 function DashboardContent() {
   const { toast } = useToast();
+  const { profile, loading: authLoading, signOut } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -36,8 +38,9 @@ function DashboardContent() {
   }, []);
 
   useEffect(() => {
+    if (authLoading || !profile) return;
     loadGroups();
-  }, [loadGroups]);
+  }, [authLoading, profile, loadGroups]);
 
   const selectedGroup = groups.find((g) => g.id === selectedGroupId) ?? null;
 
@@ -54,8 +57,10 @@ function DashboardContent() {
       selectedGroupName={selectedGroup?.name ?? null}
       onSelectGroup={setSelectedGroupId}
       onCreateGroup={() => setCreateModalOpen(true)}
+      userName={profile?.name}
+      onSignOut={signOut}
     >
-      {loading && groups.length === 0 ? (
+      {authLoading || (loading && groups.length === 0) ? (
         <GroupViewSkeleton />
       ) : error && groups.length === 0 ? (
         <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
@@ -111,8 +116,10 @@ function DashboardContent() {
 
 export function Dashboard() {
   return (
-    <ToastProvider>
-      <DashboardContent />
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <DashboardContent />
+      </ToastProvider>
+    </AuthProvider>
   );
 }

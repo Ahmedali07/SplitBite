@@ -1,13 +1,15 @@
-/**
- * Auth placeholder — swap with Supabase Auth session when ready.
- * Returns null until real authentication is wired up.
- */
-export async function getCurrentUserId(): Promise<string | null> {
-  return null;
-}
+import { supabase } from "@/lib/supabaseClient";
+import { getProfileByAuthId } from "@/lib/services/users";
 
 /**
- * Client-side local user id storage for pre-auth development.
- * Remove once Supabase Auth is integrated.
+ * Returns the signed-in user's profile id (public.users.id), or null.
  */
-export const LOCAL_USER_KEY = "splitbite_local_user_id";
+export async function getCurrentUserId(): Promise<string | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const profile = await getProfileByAuthId(user.id);
+  return profile?.id ?? null;
+}

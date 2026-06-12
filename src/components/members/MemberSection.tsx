@@ -101,24 +101,33 @@ export function AddMemberForm({
 
 type MemberListProps = {
   members: GroupMemberWithUser[];
+  currentUserId?: string | null;
 };
 
-export function MemberList({ members }: MemberListProps) {
+export function MemberList({ members, currentUserId }: MemberListProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      {members.map((member) => (
-        <span
-          key={member.id}
-          className="inline-flex items-center gap-2 rounded-full bg-slate-50 py-1 pl-1 pr-3 text-sm text-slate-700 ring-1 ring-slate-200/80"
-        >
+      {members.map((member) => {
+        const isYou = currentUserId != null && member.user_id === currentUserId;
+        return (
           <span
-            className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${avatarColor(member.user.name)}`}
+            key={member.id}
+            className="inline-flex items-center gap-2 rounded-full bg-slate-50 py-1 pl-1 pr-3 text-sm text-slate-700 ring-1 ring-slate-200/80"
           >
-            {member.user.name.charAt(0).toUpperCase()}
+            <span
+              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${avatarColor(member.user.name)}`}
+            >
+              {member.user.name.charAt(0).toUpperCase()}
+            </span>
+            {member.user.name}
+            {isYou && (
+              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                You
+              </span>
+            )}
           </span>
-          {member.user.name}
-        </span>
-      ))}
+        );
+      })}
       {members.length === 0 && (
         <p className="text-sm text-slate-500">No members yet.</p>
       )}

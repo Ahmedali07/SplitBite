@@ -1,6 +1,6 @@
 # SplitBite Roadmap
 
-## Phase 2 — Polish (current)
+## Phase 2 — Polish
 
 - [x] Toast notifications for actions
 - [x] Custom delete confirmation modal
@@ -10,12 +10,14 @@
 - [ ] Enable Supabase Realtime on tables (Dashboard → Database → Replication)
 - [x] Mobile-responsive sidebar (collapsible drawer)
 
-## Phase 3 — Authentication
+## Phase 3 — Authentication (current)
 
-- Supabase Auth (email / Google)
-- Link `auth.users` → `users` profile table
-- Replace permissive RLS with member-scoped policies
-- "You" indicator on current user in member list
+- [x] Supabase Auth (email / Google)
+- [x] Link `auth.users` → `users` profile table (`auth_id` + signup trigger)
+- [x] Replace permissive RLS with member-scoped policies
+- [x] "You" indicator on current user in member list
+- [ ] Run `supabase/migrations/002_auth.sql` in Supabase SQL Editor
+- [ ] Enable Google provider in Supabase Auth settings (optional)
 
 ## Phase 4 — Collaboration
 

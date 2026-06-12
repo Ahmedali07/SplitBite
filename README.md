@@ -24,8 +24,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 **Option A — Supabase SQL Editor (recommended)**
 
 1. Open [Supabase SQL Editor](https://supabase.com/dashboard/project/xsmutlsdlhzvngfdvqmz/sql/new) for your project
-2. Paste the contents of `supabase/migrations/001_schema.sql`
-3. Click **Run**
+2. Paste and run `supabase/migrations/001_schema.sql` (initial tables)
+3. Paste and run `supabase/migrations/002_auth.sql` (auth profiles + RLS)
 
 **Option B — CLI script**
 
@@ -45,11 +45,18 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). You will be redirected to `/login` until signed in.
+
+### 5. Auth setup (Supabase Dashboard)
+
+1. **Authentication → Providers** — enable Email (default) and optionally **Google**
+2. For Google OAuth, add redirect URL: `http://localhost:3000/auth/callback` (and your production URL later)
+3. Run `002_auth.sql` if you haven't already (see step 3)
 
 ## Features
 
-- **Groups** — create, list, and view group details
+- **Authentication** — email/password sign-up and sign-in, Google OAuth
+- **Groups** — create, list, and view group details (member-scoped via RLS)
 - **Members** — add members by name to a group
 - **Expenses** — add, edit, delete with flexible splits (equal or custom per participant)
 - **Balances** — total spent, owed, and net balance per member
@@ -64,7 +71,8 @@ src/
 │   ├── supabaseClient.ts # Browser Supabase client
 │   ├── services/         # Data access layer
 │   ├── calculations/     # Balance & split logic
-│   ├── auth/             # Auth placeholder (ready for Supabase Auth)
+│   ├── auth/             # AuthProvider, session helpers
+│   ├── supabase/         # Browser + server Supabase clients (SSR)
 │   ├── realtime/         # Realtime subscription helpers
 │   └── sharing/          # Share link helpers (future)
 └── types/                # TypeScript types
@@ -72,6 +80,5 @@ src/
 
 ## Future extensions
 
-- **Authentication** — replace `lib/auth/session.ts` with Supabase Auth + `@supabase/ssr`
 - **Real-time** — enable Supabase Realtime on tables; hooks already in `lib/realtime/`
 - **Sharing links** — add `/join/[token]` route using `lib/sharing/links.ts`

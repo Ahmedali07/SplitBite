@@ -17,6 +17,7 @@ import { computeUserBalances } from "@/lib/calculations/balances";
 import { listExpenses, deleteExpense } from "@/lib/services/expenses";
 import { listGroupMembers } from "@/lib/services/members";
 import { subscribeToGroup } from "@/lib/realtime/subscriptions";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useToast } from "@/lib/toast/ToastProvider";
 
 type GroupViewProps = {
@@ -30,6 +31,7 @@ type DeleteTarget = {
 
 export function GroupView({ group }: GroupViewProps) {
   const { toast } = useToast();
+  const { profile } = useAuth();
   const [members, setMembers] = useState<Awaited<ReturnType<typeof listGroupMembers>>>([]);
   const [expenses, setExpenses] = useState<ExpenseWithDetails[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -168,7 +170,7 @@ export function GroupView({ group }: GroupViewProps) {
 
         <div className="space-y-4 pb-24 md:pb-8">
           <SectionCard title="Members">
-            <MemberList members={members} />
+            <MemberList members={members} currentUserId={profile?.id} />
             <div className="mt-4">
               <AddMemberForm
                 groupId={group.id}

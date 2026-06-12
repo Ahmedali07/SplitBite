@@ -10,6 +10,8 @@ type AppShellProps = {
   selectedGroupName: string | null;
   onSelectGroup: (groupId: string) => void;
   onCreateGroup: () => void;
+  userName?: string | null;
+  onSignOut?: () => void;
   children: React.ReactNode;
 };
 
@@ -35,6 +37,8 @@ export function AppShell({
   selectedGroupName,
   onSelectGroup,
   onCreateGroup,
+  userName,
+  onSignOut,
   children,
 }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -105,6 +109,8 @@ export function AppShell({
             onSelectGroup={onSelectGroup}
             onCreateGroup={onCreateGroup}
             onNavigate={() => setMobileNavOpen(false)}
+            userName={userName}
+            onSignOut={onSignOut}
           />
         </div>
       </div>

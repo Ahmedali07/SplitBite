@@ -10,6 +10,7 @@
     "db:migrate": "node scripts/run-migration.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.49.1",
     "next": "^15.1.0",
     "react": "^19.0.0",

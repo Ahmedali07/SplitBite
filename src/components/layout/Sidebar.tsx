@@ -9,6 +9,8 @@ type SidebarProps = {
   onSelectGroup: (groupId: string) => void;
   onCreateGroup: () => void;
   onNavigate?: () => void;
+  userName?: string | null;
+  onSignOut?: () => void;
 };
 
 function GroupIcon() {
@@ -25,6 +27,8 @@ export function Sidebar({
   onSelectGroup,
   onCreateGroup,
   onNavigate,
+  userName,
+  onSignOut,
 }: SidebarProps) {
   function handleSelect(groupId: string) {
     onSelectGroup(groupId);
@@ -91,6 +95,24 @@ export function Sidebar({
           </ul>
         )}
       </div>
+
+      {(userName || onSignOut) && (
+        <div className="border-t border-slate-100 p-4">
+          {userName && (
+            <p className="truncate text-sm font-medium text-slate-800">{userName}</p>
+          )}
+          {onSignOut && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="mt-2 w-full justify-start px-2 text-slate-500"
+              onClick={onSignOut}
+            >
+              Sign out
+            </Button>
+          )}
+        </div>
+      )}
     </aside>
   );
 }

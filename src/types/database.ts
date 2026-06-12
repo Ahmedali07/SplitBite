@@ -2,6 +2,7 @@ export type User = {
   id: string;
   name: string;
   avatar_url: string | null;
+  auth_id: string | null;
   created_at: string;
 };
 
@@ -79,7 +80,13 @@ export type Database = {
     Tables: {
       users: TableDef<
         User,
-        { name: string; avatar_url?: string | null; id?: string; created_at?: string },
+        {
+          name: string;
+          avatar_url?: string | null;
+          auth_id?: string | null;
+          id?: string;
+          created_at?: string;
+        },
         Partial<Omit<User, "id">>
       >;
       groups: TableDef<
