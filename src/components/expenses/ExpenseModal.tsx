@@ -175,7 +175,7 @@ export function ExpenseModal({
       onClose={onClose}
       title={isEditing ? "Edit Expense" : "Add Expense"}
     >
-      <form onSubmit={handleSubmit} className="max-h-[70vh] space-y-4 overflow-y-auto">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="expense-title"
           label="Title"
@@ -185,7 +185,7 @@ export function ExpenseModal({
           required
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
             id="expense-amount"
             label="Amount"
@@ -215,7 +215,7 @@ export function ExpenseModal({
             id="paid-by"
             value={paidBy}
             onChange={(e) => setPaidBy(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-base shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 sm:text-sm"
             required
           >
             {members.map((m) => (
@@ -228,7 +228,7 @@ export function ExpenseModal({
 
         <div>
           <p className="mb-2 text-sm font-medium text-slate-700">Participants</p>
-          <div className="space-y-2 rounded-lg border border-slate-200 p-3">
+          <div className="space-y-2 rounded-xl border border-slate-200 p-3">
             {members.map((m) => {
               const state = participants.find((p) => p.user_id === m.user_id);
               if (!state) return null;
@@ -236,7 +236,7 @@ export function ExpenseModal({
               return (
                 <div
                   key={m.user_id}
-                  className="flex flex-wrap items-center gap-3 rounded-md bg-slate-50 px-3 py-2"
+                  className="flex flex-col gap-2 rounded-xl bg-slate-50 px-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
                 >
                   <label className="flex flex-1 cursor-pointer items-center gap-2">
                     <input
@@ -286,13 +286,13 @@ export function ExpenseModal({
           </p>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onClose}>
+        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" onClick={onClose} fullWidth className="sm:w-auto">
             Cancel
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} fullWidth className="sm:w-auto">
             {loading ? "Saving…" : isEditing ? "Update" : "Add Expense"}
           </Button>
         </div>

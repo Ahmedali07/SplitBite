@@ -8,7 +8,7 @@
 - [x] Loading skeletons + sync indicator
 - [x] Member avatars (initials)
 - [ ] Enable Supabase Realtime on tables (Dashboard → Database → Replication)
-- [ ] Mobile-responsive sidebar (collapsible drawer)
+- [x] Mobile-responsive sidebar (collapsible drawer)
 
 ## Phase 3 — Authentication
 

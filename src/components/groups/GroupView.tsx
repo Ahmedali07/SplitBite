@@ -10,6 +10,7 @@ import { AddMemberForm, MemberList } from "@/components/members/MemberSection";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { SectionCard } from "@/components/ui/SectionCard";
 import { GroupViewSkeleton } from "@/components/ui/Skeleton";
 import { Spinner } from "@/components/ui/Spinner";
 import { computeUserBalances } from "@/lib/calculations/balances";
@@ -125,75 +126,101 @@ export function GroupView({ group }: GroupViewProps) {
   }
 
   const balances = computeUserBalances(members, expenses);
+  const canAddExpense = members.length > 0;
 
   if (initialLoading) {
     return <GroupViewSkeleton />;
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
-      <header className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">{group.name}</h2>
-          <p className="mt-1 text-sm text-slate-500">
-            Created {new Date(group.created_at).toLocaleDateString()}
-          </p>
-        </div>
+    <div className="relative flex-1 overflow-y-auto scrollbar-thin">
+      <div className="mx-auto max-w-4xl px-4 py-4 sm:px-6 sm:py-6">
+        {/* Group header — hidden subtitle on mobile (shown in top bar) */}
+        <header className="mb-5 hidden items-start justify-between gap-4 md:flex">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+              {group.name}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Created {new Date(group.created_at).toLocaleDateString()}
+            </p>
+          </div>
+          {refreshing && (
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <Spinner size="sm" />
+              Syncing…
+            </div>
+          )}
+        </header>
+
         {refreshing && (
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+          <div className="mb-4 flex items-center gap-2 text-sm text-slate-400 md:hidden">
             <Spinner size="sm" />
             Syncing…
           </div>
         )}
-      </header>
 
-      {error && (
-        <Alert variant="error" onDismiss={() => setError(null)} className="mb-4">
-          {error}
-        </Alert>
-      )}
-
-      <div className="mb-8 space-y-4">
-        <section>
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Members
-          </h3>
-          <MemberList members={members} />
-          <div className="relative mt-4 max-w-md">
-            <AddMemberForm
-              groupId={group.id}
-              existingMemberIds={members.map((m) => m.user_id)}
-              onAdded={handleMemberAdded}
-            />
-          </div>
-        </section>
-
-        <SettlementSummary balances={balances} />
-        <BalanceSummary balances={balances} />
-      </div>
-
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Expenses
-          </h3>
-          <Button onClick={handleAddExpense} disabled={members.length === 0}>
-            + Add Expense
-          </Button>
-        </div>
-
-        {members.length === 0 && (
-          <Alert variant="warning" className="mb-4">
-            Add at least one member before creating expenses.
+        {error && (
+          <Alert variant="error" onDismiss={() => setError(null)} className="mb-4">
+            {error}
           </Alert>
         )}
 
-        <ExpenseTable
-          expenses={expenses}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-        />
-      </section>
+        <div className="space-y-4 pb-24 md:pb-8">
+          <SectionCard title="Members">
+            <MemberList members={members} />
+            <div className="mt-4">
+              <AddMemberForm
+                groupId={group.id}
+                existingMemberIds={members.map((m) => m.user_id)}
+                onAdded={handleMemberAdded}
+              />
+            </div>
+          </SectionCard>
+
+          <SettlementSummary balances={balances} />
+          <BalanceSummary balances={balances} />
+
+          <SectionCard
+            title="Expenses"
+            action={
+              <Button
+                size="sm"
+                onClick={handleAddExpense}
+                disabled={!canAddExpense}
+                className="hidden sm:inline-flex"
+              >
+                + Add Expense
+              </Button>
+            }
+          >
+            {!canAddExpense && (
+              <Alert variant="warning" className="mb-4">
+                Add at least one member before creating expenses.
+              </Alert>
+            )}
+            <ExpenseTable
+              expenses={expenses}
+              onEdit={handleEdit}
+              onDelete={handleDeleteRequest}
+            />
+          </SectionCard>
+        </div>
+      </div>
+
+      {/* Mobile FAB */}
+      {canAddExpense && (
+        <div className="fixed bottom-4 right-4 z-30 sm:hidden safe-bottom">
+          <button
+            type="button"
+            onClick={handleAddExpense}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-2xl font-light text-white shadow-elevated active:bg-emerald-700"
+            aria-label="Add expense"
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <ExpenseModal
         key={editingExpense?.id ?? "new"}

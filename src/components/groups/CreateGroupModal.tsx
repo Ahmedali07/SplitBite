@@ -72,11 +72,11 @@ export function CreateGroupModal({
             {error}
           </Alert>
         )}
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onClose}>
+        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" onClick={onClose} fullWidth className="sm:w-auto">
             Cancel
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} fullWidth className="sm:w-auto">
             {loading ? "Creating…" : "Create"}
           </Button>
         </div>

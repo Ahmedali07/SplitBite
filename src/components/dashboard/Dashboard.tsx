@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Group } from "@/types/database";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { AppShell } from "@/components/layout/AppShell";
 import { CreateGroupModal } from "@/components/groups/CreateGroupModal";
 import { GroupView } from "@/components/groups/GroupView";
 import { Button } from "@/components/ui/Button";
@@ -48,57 +48,64 @@ function DashboardContent() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      <Sidebar
-        groups={groups}
-        selectedGroupId={selectedGroupId}
-        onSelectGroup={setSelectedGroupId}
-        onCreateGroup={() => setCreateModalOpen(true)}
-      />
-
-      <main className="flex flex-1 flex-col overflow-hidden">
-        {loading && groups.length === 0 ? (
-          <GroupViewSkeleton />
-        ) : error && groups.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center p-6">
-            <div className="max-w-md rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-              <p className="font-medium text-red-800">Connection error</p>
-              <p className="mt-2 text-sm text-red-600">{error}</p>
-              <p className="mt-4 text-xs text-red-500">
-                Make sure you ran the SQL migration in Supabase and your env
-                variables are set.
-              </p>
-              <Button className="mt-4" variant="secondary" onClick={loadGroups}>
-                Retry
-              </Button>
+    <AppShell
+      groups={groups}
+      selectedGroupId={selectedGroupId}
+      selectedGroupName={selectedGroup?.name ?? null}
+      onSelectGroup={setSelectedGroupId}
+      onCreateGroup={() => setCreateModalOpen(true)}
+    >
+      {loading && groups.length === 0 ? (
+        <GroupViewSkeleton />
+      ) : error && groups.length === 0 ? (
+        <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
+          <div className="max-w-md rounded-2xl border border-red-200 bg-white p-6 text-center shadow-card">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+              !
             </div>
+            <p className="font-semibold text-red-800">Connection error</p>
+            <p className="mt-2 text-sm text-red-600">{error}</p>
+            <p className="mt-4 text-xs text-slate-500">
+              Make sure you ran the SQL migration in Supabase and your env
+              variables are set.
+            </p>
+            <Button className="mt-5" variant="secondary" fullWidth onClick={loadGroups}>
+              Retry
+            </Button>
           </div>
-        ) : selectedGroup ? (
-          <GroupView key={selectedGroup.id} group={selectedGroup} />
-        ) : (
-          <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
-            <div className="max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h2 className="text-xl font-semibold text-slate-800">
-                Welcome to SplitBite
-              </h2>
-              <p className="mt-2 text-sm text-slate-500">
-                Create a group to start splitting expenses with flexible
-                per-expense participant splits.
-              </p>
-              <Button className="mt-6" onClick={() => setCreateModalOpen(true)}>
-                + Create your first group
-              </Button>
+        </div>
+      ) : selectedGroup ? (
+        <GroupView key={selectedGroup.id} group={selectedGroup} />
+      ) : (
+        <div className="flex flex-1 flex-col items-center justify-center p-4 sm:p-6">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-8 text-center shadow-card">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-xl font-bold text-white shadow-sm">
+              SB
             </div>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Welcome to SplitBite
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
+              Create a group to start splitting expenses with flexible
+              per-expense participant splits.
+            </p>
+            <Button
+              className="mt-6"
+              fullWidth
+              onClick={() => setCreateModalOpen(true)}
+            >
+              + Create your first group
+            </Button>
           </div>
-        )}
-      </main>
+        </div>
+      )}
 
       <CreateGroupModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onCreated={handleGroupCreated}
       />
-    </div>
+    </AppShell>
   );
 }
 

@@ -8,6 +8,21 @@ import { Input } from "@/components/ui/Input";
 import { createUser } from "@/lib/services/users";
 import { addMemberToGroup, isGroupMember } from "@/lib/services/members";
 
+const AVATAR_COLORS = [
+  "bg-emerald-100 text-emerald-700",
+  "bg-blue-100 text-blue-700",
+  "bg-violet-100 text-violet-700",
+  "bg-amber-100 text-amber-700",
+  "bg-rose-100 text-rose-700",
+  "bg-cyan-100 text-cyan-700",
+];
+
+function avatarColor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
 type AddMemberFormProps = {
   groupId: string;
   existingMemberIds: string[];
@@ -57,7 +72,10 @@ export function AddMemberForm({
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="flex items-end gap-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-2 sm:flex-row sm:items-end"
+      >
         <div className="flex-1">
           <Input
             id="member-name"
@@ -68,7 +86,7 @@ export function AddMemberForm({
             disabled={loading}
           />
         </div>
-        <Button type="submit" disabled={loading} className="mb-0.5">
+        <Button type="submit" disabled={loading} fullWidth className="sm:mb-0.5 sm:w-auto">
           {loading ? "Adding…" : "Add"}
         </Button>
       </form>
@@ -91,9 +109,11 @@ export function MemberList({ members }: MemberListProps) {
       {members.map((member) => (
         <span
           key={member.id}
-          className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700"
+          className="inline-flex items-center gap-2 rounded-full bg-slate-50 py-1 pl-1 pr-3 text-sm text-slate-700 ring-1 ring-slate-200/80"
         >
-          <span className="mr-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700">
+          <span
+            className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${avatarColor(member.user.name)}`}
+          >
             {member.user.name.charAt(0).toUpperCase()}
           </span>
           {member.user.name}

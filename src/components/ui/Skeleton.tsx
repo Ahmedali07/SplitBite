@@ -5,7 +5,7 @@ type SkeletonProps = {
 export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse rounded-md bg-slate-200 ${className}`}
+      className={`animate-pulse rounded-xl bg-slate-200/80 ${className}`}
       aria-hidden
     />
   );
@@ -13,17 +13,14 @@ export function Skeleton({ className = "" }: SkeletonProps) {
 
 export function GroupViewSkeleton() {
   return (
-    <div className="flex-1 overflow-y-auto p-6">
-      <Skeleton className="mb-2 h-8 w-48" />
-      <Skeleton className="mb-8 h-4 w-32" />
-      <Skeleton className="mb-4 h-4 w-20" />
-      <div className="mb-8 flex gap-2">
-        <Skeleton className="h-8 w-20 rounded-full" />
-        <Skeleton className="h-8 w-20 rounded-full" />
-        <Skeleton className="h-8 w-20 rounded-full" />
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+      <div className="mx-auto max-w-4xl space-y-4">
+        <Skeleton className="hidden h-8 w-48 md:block" />
+        <Skeleton className="hidden h-4 w-32 md:block" />
+        <Skeleton className="h-32 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
       </div>
-      <Skeleton className="mb-8 h-40 w-full rounded-xl" />
-      <Skeleton className="h-48 w-full rounded-xl" />
     </div>
   );
 }

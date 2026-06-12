@@ -3,6 +3,7 @@
 import type { UserBalance } from "@/types/database";
 import { formatCurrency } from "@/lib/calculations/balances";
 import { computeSettlements } from "@/lib/calculations/settlements";
+import { SectionCard } from "@/components/ui/SectionCard";
 
 type SettlementSummaryProps = {
   balances: UserBalance[];
@@ -17,37 +18,40 @@ export function SettlementSummary({ balances }: SettlementSummaryProps) {
   if (!hasExpenses) return null;
 
   return (
-    <section className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-emerald-800">
-        Settle up
-      </h3>
-
+    <SectionCard title="Settle up" variant="highlight">
       {settlements.length === 0 ? (
-        <p className="text-sm text-emerald-700">
-          Everyone is settled — no payments needed.
-        </p>
+        <div className="flex items-center gap-3 rounded-xl bg-white/80 px-4 py-3">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+            ✓
+          </span>
+          <p className="text-sm text-emerald-800">
+            Everyone is settled — no payments needed.
+          </p>
+        </div>
       ) : (
         <ul className="space-y-2">
           {settlements.map((s, idx) => (
             <li
               key={`${s.from_user_id}-${s.to_user_id}-${idx}`}
-              className="flex flex-wrap items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm shadow-sm"
+              className="flex flex-col gap-1 rounded-xl bg-white px-4 py-3 text-sm shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-2"
             >
-              <span className="font-medium text-slate-800">{s.from_user_name}</span>
-              <span className="text-slate-400">pays</span>
-              <span className="font-semibold text-emerald-700">
+              <span className="font-semibold text-slate-800">{s.from_user_name}</span>
+              <span className="hidden text-slate-400 sm:inline">pays</span>
+              <span className="text-xs text-slate-400 sm:hidden">pays</span>
+              <span className="text-base font-bold text-emerald-700 sm:text-sm">
                 {formatCurrency(s.amount)}
               </span>
-              <span className="text-slate-400">to</span>
-              <span className="font-medium text-slate-800">{s.to_user_name}</span>
+              <span className="hidden text-slate-400 sm:inline">to</span>
+              <span className="text-xs text-slate-400 sm:hidden">to</span>
+              <span className="font-semibold text-slate-800">{s.to_user_name}</span>
             </li>
           ))}
         </ul>
       )}
 
-      <p className="mt-2 text-xs text-emerald-600/80">
+      <p className="mt-3 text-xs text-emerald-700/70">
         Simplified payments to clear all balances.
       </p>
-    </section>
+    </SectionCard>
   );
 }

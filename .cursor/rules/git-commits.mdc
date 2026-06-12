@@ -1,0 +1,13 @@
+---
+description: Git commit message standards — no co-author trailers
+alwaysApply: true
+---
+
+# Git commits
+
+- Never add `Co-authored-by:` trailers to commit messages (including `Co-authored-by: Cursor <cursoragent@cursor.com>`).
+- Commit messages should list only the human author; the user does not want AI/tool co-authorship on any commit.
+- If `git commit` or `git commit --amend` keeps appending a co-author trailer (Cursor tooling), rewrite the commit without it:
+  1. Write the desired message to a temp file.
+  2. Use `git commit-tree` with the current tree (and parent if amending) plus `git update-ref refs/heads/<branch>`.
+- After rewriting history that was already pushed, use `git push --force` only when the user explicitly asks.
