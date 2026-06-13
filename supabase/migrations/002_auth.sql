@@ -88,10 +88,14 @@ DROP POLICY IF EXISTS "expense_participants_insert" ON public.expense_participan
 DROP POLICY IF EXISTS "expense_participants_update" ON public.expense_participants;
 DROP POLICY IF EXISTS "expense_participants_delete" ON public.expense_participants;
 
--- users: own profile + co-members in shared groups
+-- users: own profile + placeholder profiles + co-members in shared groups
 CREATE POLICY "users_select" ON public.users
   FOR SELECT USING (
     auth_id = auth.uid()
+    OR (
+      auth_id IS NULL
+      AND auth.uid() IS NOT NULL
+    )
     OR EXISTS (
       SELECT 1
       FROM public.group_members gm_self
@@ -111,9 +115,12 @@ CREATE POLICY "users_insert_placeholder" ON public.users
 CREATE POLICY "users_update_own" ON public.users
   FOR UPDATE USING (auth_id = auth.uid());
 
--- groups: visible to members only
+-- groups: visible to members and to the creator (needed for INSERT ... RETURNING)
 CREATE POLICY "groups_select" ON public.groups
-  FOR SELECT USING (public.is_member_of_group(id));
+  FOR SELECT USING (
+    public.is_member_of_group(id)
+    OR created_by = public.current_user_profile_id()
+  );
 
 CREATE POLICY "groups_insert" ON public.groups
   FOR INSERT WITH CHECK (

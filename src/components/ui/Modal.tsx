@@ -7,9 +7,10 @@ type ModalProps = {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, title, children, footer }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -52,7 +53,12 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             ✕
           </button>
         </div>
-        <div className="overflow-y-auto px-5 py-4 safe-bottom">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+        {footer && (
+          <div className="shrink-0 border-t border-slate-100 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

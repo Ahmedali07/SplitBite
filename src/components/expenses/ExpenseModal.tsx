@@ -169,13 +169,27 @@ export function ExpenseModal({
     }
   }
 
+  const formId = isEditing ? "edit-expense-form" : "add-expense-form";
+
+  const footer = (
+    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <Button type="button" variant="secondary" onClick={onClose} fullWidth className="sm:w-auto">
+        Cancel
+      </Button>
+      <Button type="submit" form={formId} disabled={loading} fullWidth className="sm:w-auto">
+        {loading ? "Saving…" : isEditing ? "Update" : "Add Expense"}
+      </Button>
+    </div>
+  );
+
   return (
     <Modal
       open={open}
       onClose={onClose}
       title={isEditing ? "Edit Expense" : "Add Expense"}
+      footer={footer}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form id={formId} onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="expense-title"
           label="Title"
@@ -287,15 +301,6 @@ export function ExpenseModal({
         </div>
 
         {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
-
-        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
-          <Button type="button" variant="secondary" onClick={onClose} fullWidth className="sm:w-auto">
-            Cancel
-          </Button>
-          <Button type="submit" disabled={loading} fullWidth className="sm:w-auto">
-            {loading ? "Saving…" : isEditing ? "Update" : "Add Expense"}
-          </Button>
-        </div>
       </form>
     </Modal>
   );

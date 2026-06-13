@@ -13,7 +13,14 @@ import { ToastProvider, useToast } from "@/lib/toast/ToastProvider";
 
 function DashboardContent() {
   const { toast } = useToast();
-  const { profile, profileError, loading: authLoading, signOut, refreshProfile } = useAuth();
+  const {
+    authUser,
+    profile,
+    profileError,
+    loading: authLoading,
+    signOut,
+    refreshProfile,
+  } = useAuth();
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -38,11 +45,20 @@ function DashboardContent() {
   }, []);
 
   useEffect(() => {
-    if (authLoading || !profile) return;
+    if (authLoading || !profile) {
+      if (!authLoading && !profile) setLoading(false);
+      return;
+    }
     loadGroups();
   }, [authLoading, profile, loadGroups]);
 
   const selectedGroup = groups.find((g) => g.id === selectedGroupId) ?? null;
+  const needsProfile = !authLoading && !!authUser && !profile && !profileError;
+  const userAvatarUrl =
+    profile?.avatar_url ??
+    (authUser?.user_metadata?.avatar_url as string | undefined) ??
+    (authUser?.user_metadata?.picture as string | undefined) ??
+    null;
 
   function handleGroupCreated(group: Group) {
     setGroups((prev) => [group, ...prev]);
@@ -58,15 +74,18 @@ function DashboardContent() {
       onSelectGroup={setSelectedGroupId}
       onCreateGroup={() => setCreateModalOpen(true)}
       userName={profile?.name}
+      userAvatarUrl={userAvatarUrl}
       onSignOut={signOut}
     >
-      {authLoading || (loading && groups.length === 0 && !profileError) ? (
+      {authLoading || (profile && loading && groups.length === 0 && !profileError) ? (
         <GroupViewSkeleton />
-      ) : profileError ? (
+      ) : profileError || needsProfile ? (
         <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
           <div className="max-w-md rounded-2xl border border-amber-200 bg-white p-6 text-center shadow-card">
             <p className="font-semibold text-amber-900">Profile setup required</p>
-            <p className="mt-2 text-sm text-amber-800">{profileError}</p>
+            <p className="mt-2 text-sm text-amber-800">
+              {profileError ?? "Your profile could not be loaded. Please try again."}
+            </p>
             <p className="mt-4 text-xs text-slate-500">
               Run <code className="rounded bg-slate-100 px-1">002_auth.sql</code> in Supabase and add{" "}
               <code className="rounded bg-slate-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code> on Vercel.

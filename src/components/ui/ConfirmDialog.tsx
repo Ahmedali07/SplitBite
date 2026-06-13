@@ -25,21 +25,29 @@ export function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   return (
-    <Modal open={open} onClose={onCancel} title={title}>
+    <Modal
+      open={open}
+      onClose={onCancel}
+      title={title}
+      footer={
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading} fullWidth className="sm:w-auto">
+            {cancelLabel}
+          </Button>
+          <Button
+            type="button"
+            variant={variant === "danger" ? "danger" : "primary"}
+            onClick={onConfirm}
+            disabled={loading}
+            fullWidth
+            className="sm:w-auto"
+          >
+            {loading ? "Please wait…" : confirmLabel}
+          </Button>
+        </div>
+      }
+    >
       <p className="text-sm text-slate-600">{message}</p>
-      <div className="mt-6 flex justify-end gap-2">
-        <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
-          {cancelLabel}
-        </Button>
-        <Button
-          type="button"
-          variant={variant === "danger" ? "danger" : "primary"}
-          onClick={onConfirm}
-          disabled={loading}
-        >
-          {loading ? "Please wait…" : confirmLabel}
-        </Button>
-      </div>
     </Modal>
   );
 }

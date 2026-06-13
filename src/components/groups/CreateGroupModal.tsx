@@ -46,9 +46,20 @@ export function CreateGroupModal({
     }
   }
 
+  const footer = (
+    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <Button type="button" variant="secondary" onClick={onClose} fullWidth className="sm:w-auto">
+        Cancel
+      </Button>
+      <Button type="submit" form="create-group-form" disabled={loading || !profile} fullWidth className="sm:w-auto">
+        {loading ? "Creating…" : "Create"}
+      </Button>
+    </div>
+  );
+
   return (
-    <Modal open={open} onClose={onClose} title="Create Group">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal open={open} onClose={onClose} title="Create Group" footer={footer}>
+      <form id="create-group-form" onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="group-name"
           label="Group name"
@@ -67,14 +78,6 @@ export function CreateGroupModal({
             {error}
           </Alert>
         )}
-        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
-          <Button type="button" variant="secondary" onClick={onClose} fullWidth className="sm:w-auto">
-            Cancel
-          </Button>
-          <Button type="submit" disabled={loading || !profile} fullWidth className="sm:w-auto">
-            {loading ? "Creating…" : "Create"}
-          </Button>
-        </div>
       </form>
     </Modal>
   );
